@@ -1,3 +1,16 @@
+## [Unreleased]
+
+### 🐛 **Bug Fixes**
+
+**Search and Person Pages - Complete NR Content Filtering**
+- **Issue:** NR (Not Rated) content still appearing in search results and person pages despite rating restrictions
+- **Root Cause:** While person endpoints used `createTmdbWithRegionLanguage(req.user)`, the combined_credits endpoint didn't apply certification-based filtering to the actual credits
+- **Fix:** 
+  - Added `filterCreditsByRating` helper function to `server/routes/person.ts`
+  - Person combined_credits now separates cast/crew by media_type and applies certification filtering before display
+  - Simplified search filtering logic for consistency
+- **Result:** NR content is now properly excluded from both search results and person pages based on user rating restrictions
+
 ## [1.5.7] - 2025-10-11 (LATEST RELEASE)
 
 ### 🎯 **Fix Issue #16 - Content Filtering Gaps**
