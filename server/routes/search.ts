@@ -1,7 +1,6 @@
 import TheMovieDb from '@server/api/themoviedb';
 import type { TmdbSearchMultiResponse } from '@server/api/themoviedb/interfaces';
 import Media from '@server/entity/Media';
-import { User } from '@server/entity/User';
 import { findSearchProvider } from '@server/lib/search';
 import logger from '@server/logger';
 import { mapSearchResults } from '@server/models/Search';
@@ -15,16 +14,19 @@ import { createTmdbWithRegionLanguage } from './discover';
  * @param tmdb - TheMovieDb instance with user's rating preferences
  * @returns Promise of filtered results using certification data
  */
-const filterResultsByRating = async (results: any[], tmdb: TheMovieDb): Promise<any[]> => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const filterResultsByRating = async (
+  results: any[],
+  tmdb: TheMovieDb
+): Promise<any[]> => {
   // Separate results by media type for proper certification filtering
+  // TMDB search results should always have media_type set, but handle undefined as a fallback
   const movieResults = results.filter(
-    (result) => result.media_type === 'movie' || (!result.media_type && result.title)
+    (result) => result.media_type === 'movie'
   );
-  const tvResults = results.filter(
-    (result) => result.media_type === 'tv' || (!result.media_type && result.name)
-  );
+  const tvResults = results.filter((result) => result.media_type === 'tv');
   const otherResults = results.filter(
-    (result) => result.media_type !== 'movie' && result.media_type !== 'tv' && result.media_type !== undefined
+    (result) => result.media_type !== 'movie' && result.media_type !== 'tv'
   );
 
   // Apply certification-based filtering using TheMovieDb methods
